@@ -1,17 +1,13 @@
-use std::fs::File;
-use std::path::Path;
+use std::io::{Read, Seek};
 
 use sb_linker_load::load;
 
-pub fn link<P: AsRef<Path>>(paths: &[P]) -> anyhow::Result<()> {
+pub fn link<R: Read + Seek>(inputs: Vec<&mut R>) -> anyhow::Result<()> {
     // 1. リンク対象ファイルを読み込む
-    let _ = paths
-        .iter()
-        .map(|path| {
-            let mut file = File::open(path)?;
-            load(&mut file)
-        })
-        .collect::<Vec<_>>();
+    let _ = inputs
+        .into_iter()
+        .map(load)
+        .collect::<anyhow::Result<Vec<_>>>()?;
 
     Ok(())
 }
