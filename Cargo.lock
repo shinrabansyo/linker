@@ -3,5 +3,9 @@
 version = 4
 
 [[package]]
-name = "linker"
+name = "sb_linker"
+version = "0.1.0"
+
+[[package]]
+name = "sb_linker_cli"
 version = "0.1.0"
