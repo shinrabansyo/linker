@@ -1,8 +1,6 @@
 pub mod inst;
 
-use std::fs::File;
 use std::io::Write;
-use std::path::Path;
 
 use serde::{Serialize, Deserialize};
 
@@ -10,8 +8,8 @@ use inst::Inst;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Object {
-    name: String,
-    code: Vec<Inst>,
+    pub name: String,
+    pub code: Vec<Inst>,
 }
 
 impl Object {
@@ -19,14 +17,12 @@ impl Object {
         Object { name, code }
     }
 
-    pub fn dump<P: AsRef<Path>>(&self, path: P) -> anyhow::Result<()> {
-        let mut f = File::create(path)?;
-
+    pub fn dump(&self, f: &mut impl Write) -> anyhow::Result<()> {
         // Header
         f.write_all(&[0x12, 0x04])?;
 
         // Body
-        serde_cbor::to_writer(&mut f, &self)?;
+        serde_cbor::to_writer(f, &self)?;
 
         Ok(())
     }
