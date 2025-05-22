@@ -1,0 +1,13 @@
+[package]
+name = "sb_linker_load_objfile"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+serde_cbor = { workspace = true }
+sb_linker_obj = { path = "../obj" }
+
+[dev-dependencies]
+vfs = "0.12.1"

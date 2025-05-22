@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 sb_linker_obj = { path = "./crates/obj" }
+sb_linker_load = { path = "./crates/load" }

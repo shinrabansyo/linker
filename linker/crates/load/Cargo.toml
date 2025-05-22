@@ -1,0 +1,10 @@
+[package]
+name = "sb_linker_load"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+sb_linker_obj = { path = "../obj" }
+sb_linker_load_objfile = { path = "../load_objfile" }
