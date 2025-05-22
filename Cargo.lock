@@ -86,6 +86,7 @@ dependencies = [
 name = "sb_linker"
 version = "0.1.0"
 dependencies = [
+ "sb_linker_config",
  "sb_linker_load",
  "sb_linker_obj",
 ]
@@ -93,6 +94,15 @@ dependencies = [
 [[package]]
 name = "sb_linker_cli"
 version = "0.1.0"
+
+[[package]]
+name = "sb_linker_config"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "serde",
+ "thiserror",
+]
 
 [[package]]
 name = "sb_linker_load"
