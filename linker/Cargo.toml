@@ -2,3 +2,6 @@
 name = "sb_linker"
 version = "0.1.0"
 edition = "2024"
+
+[dependencies]
+sb_linker_obj = { path = "./crates/obj" }

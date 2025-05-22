@@ -13,3 +13,4 @@ members = [
 anyhow = "1.0.98"
 thiserror = "2.0.12"
 serde = "1.0.219"
+serde_cbor = "0.11.2"
