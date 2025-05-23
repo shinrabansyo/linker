@@ -1,0 +1,14 @@
+[package]
+name = "sb_linker"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+sb_asm = { workspace = true }
+sb_linker_config = { path = "./crates/config" }
+sb_linker_obj = { path = "./crates/obj" }
+sb_linker_load = { path = "./crates/load" }
+sb_linker_layout = { path = "./crates/layout" }
+sb_linker_asmgen = { path = "./crates/asmgen" }

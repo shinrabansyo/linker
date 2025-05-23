@@ -1,6 +1,17 @@
 [package]
-name = "linker"
+name = "sb_linker_cli"
 version = "0.1.0"
 edition = "2024"
 
-[dependencies]
+[workspace]
+resolver = "2"
+members = [
+    "./linker",
+]
+
+[workspace.dependencies]
+anyhow = "1.0.98"
+thiserror = "2.0.12"
+serde = "1.0.219"
+serde_cbor = "0.11.2"
+sb_asm = { git = "https://github.com/shinrabansyo/assembler.git", rev = "042bff98ceb1c2b1dcb1fcd2987c68a896adccc9" }
