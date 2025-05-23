@@ -111,6 +111,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "sb_asm",
+ "sb_linker_config",
  "sb_linker_obj",
  "thiserror",
 ]

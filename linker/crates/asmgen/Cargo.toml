@@ -7,4 +7,5 @@ edition = "2024"
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 sb_asm = { workspace = true }
+sb_linker_config = { path = "../config" }
 sb_linker_obj = { path = "../obj" }

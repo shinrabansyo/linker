@@ -18,12 +18,12 @@ pub fn link_files<R: Read + Seek>(config: Config, inputs: Vec<&mut R>) -> anyhow
     link_objs(config, objs)
 }
 
-pub fn link_objs(_: Config, objs: Vec<Object>) -> anyhow::Result<String> {
+pub fn link_objs(config: Config, objs: Vec<Object>) -> anyhow::Result<String> {
     // 1. データ配置決定
     let objs = layout(objs);
 
     // 2. アセンブリコード生成
-    let (asm_data, asm_inst) = asmgen(objs);
+    let (asm_data, asm_inst) = asmgen(&config, objs);
 
     // 3. アセンブル
     let (data, inst) = assemble_ir(asm_data, asm_inst)?;
