@@ -10,3 +10,4 @@ sb_asm = { workspace = true }
 sb_linker_config = { path = "./crates/config" }
 sb_linker_obj = { path = "./crates/obj" }
 sb_linker_load = { path = "./crates/load" }
+sb_linker_layout = { path = "./crates/layout" }

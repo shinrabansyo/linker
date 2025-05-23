@@ -98,6 +98,7 @@ dependencies = [
  "anyhow",
  "sb_asm",
  "sb_linker_config",
+ "sb_linker_layout",
  "sb_linker_load",
  "sb_linker_obj",
  "thiserror",
@@ -113,6 +114,15 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "serde",
+ "thiserror",
+]
+
+[[package]]
+name = "sb_linker_layout"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "sb_linker_obj",
  "thiserror",
 ]
 
