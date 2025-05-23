@@ -83,20 +83,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "sb_asm"
-version = "0.1.0"
-source = "git+https://github.com/shinrabansyo/assembler.git?rev=042bff98ceb1c2b1dcb1fcd2987c68a896adccc9#042bff98ceb1c2b1dcb1fcd2987c68a896adccc9"
-dependencies = [
- "anyhow",
- "thiserror",
-]
-
-[[package]]
 name = "sb_linker"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "sb_asm",
  "sb_linker_asmgen",
  "sb_linker_config",
  "sb_linker_layout",
@@ -110,7 +100,6 @@ name = "sb_linker_asmgen"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "sb_asm",
  "sb_linker_config",
  "sb_linker_obj",
  "thiserror",
