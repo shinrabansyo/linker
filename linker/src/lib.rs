@@ -14,10 +14,10 @@ pub fn link<R: Read + Seek>(_: Config, inputs: Vec<&mut R>) -> anyhow::Result<St
         .collect::<anyhow::Result<Vec<_>>>()?;
 
     // 2. データ配置決定
-    let insts = layout(objs);
+    let objs = layout(objs);
 
     // 3. アセンブリコード生成
-    let (asm_data, asm_inst) = asmgen(insts);
+    let (asm_data, asm_inst) = asmgen(objs);
 
     // 4. アセンブル
     let (data, inst) = assemble_ir(asm_data, asm_inst)?;

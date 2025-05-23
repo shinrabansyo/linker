@@ -1,8 +1,14 @@
+mod inst;
+
 use sb_asm::dmem::ir::Data as AsmData;
 use sb_asm::imem::ir::unresolved::Inst as AsmInst;
 
-use sb_linker_obj::inst::Inst as ObjInst;
+use sb_linker_obj::Object;
 
-pub fn asmgen(_: Vec<ObjInst>) -> (Vec<AsmData>, Vec<AsmInst>) {
-    todo!()
+use inst::asmgen_inst;
+
+pub fn asmgen(objs: Vec<Object>) -> (Vec<AsmData>, Vec<AsmInst>) {
+    let asm_data = vec![];
+    let asm_inst = asmgen_inst(objs);
+    (asm_data, asm_inst)
 }
