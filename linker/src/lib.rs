@@ -7,7 +7,7 @@ use sb_linker_load::load;
 use sb_linker_layout::layout;
 use sb_linker_asmgen::asmgen;
 
-pub fn link_files<R: Read + Seek>(config: Config, inputs: Vec<&mut R>) -> anyhow::Result<String> {
+pub fn link_files<R: Read + Seek>(config: Config, inputs: Vec<&mut R>) -> anyhow::Result<(String, String)> {
     // 1. リンク対象ファイルの読み込み
     let objs = inputs
         .into_iter()
@@ -18,7 +18,7 @@ pub fn link_files<R: Read + Seek>(config: Config, inputs: Vec<&mut R>) -> anyhow
     link_objs(config, objs)
 }
 
-pub fn link_objs(config: Config, objs: Vec<Object>) -> anyhow::Result<String> {
+pub fn link_objs(config: Config, objs: Vec<Object>) -> anyhow::Result<(String, String)> {
     // 1. データ配置決定
     let objs = layout(objs);
 
@@ -27,7 +27,6 @@ pub fn link_objs(config: Config, objs: Vec<Object>) -> anyhow::Result<String> {
 
     // 3. アセンブル
     let (data, inst) = assemble_ir(asm_data, asm_inst)?;
-    let asm = format!("{}\n===\n{}", data, inst);
 
-    Ok(asm)
+    Ok((data, inst))
 }
