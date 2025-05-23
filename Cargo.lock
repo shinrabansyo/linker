@@ -97,9 +97,20 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "sb_asm",
+ "sb_linker_asmgen",
  "sb_linker_config",
  "sb_linker_layout",
  "sb_linker_load",
+ "sb_linker_obj",
+ "thiserror",
+]
+
+[[package]]
+name = "sb_linker_asmgen"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "sb_asm",
  "sb_linker_obj",
  "thiserror",
 ]
