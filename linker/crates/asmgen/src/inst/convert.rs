@@ -8,7 +8,8 @@ pub fn write_insts<W: Write>(buf: &mut W, obj: Object) -> anyhow::Result<()> {
     macro_rules! write_value {
         ($buf:expr, $value:expr) => {
             match $value {
-                InstValue::InstLabel(label) => writeln!($buf, "{}.{}", obj.name, label),
+                InstValue::InstLabel(label) => writeln!($buf, "@{}.{}", obj.name, label),
+                InstValue::Function(fname) => writeln!($buf, "@{}", fname),
                 InstValue::Imm(imm) => writeln!($buf, "{}", imm),
                 _ => unimplemented!(),
             }
