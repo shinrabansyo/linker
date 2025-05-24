@@ -1,5 +1,7 @@
 use std::io::{Read, Seek};
 
+pub use sb_linker_obj as obj;
+
 use sb_linker_config::Config;
 use sb_linker_load::load;
 use sb_linker_layout::layout;
