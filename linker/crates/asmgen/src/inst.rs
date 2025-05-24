@@ -2,6 +2,7 @@ mod convert;
 mod gen_entrypoint;
 
 use std::collections::VecDeque;
+use std::fmt::Write;
 
 use sb_linker_config::Config;
 use sb_linker_obj::Object;
@@ -20,6 +21,7 @@ pub fn asmgen_inst(config: &Config, objs: Vec<Object>) -> anyhow::Result<String>
     // 3. オブジェクトファイル内の命令を書き出し
     let mut result = String::new();
     for obj in objs {
+        writeln!(&mut result, "@{}", obj.name)?;
         write_insts(&mut result, obj)?;
     }
 
