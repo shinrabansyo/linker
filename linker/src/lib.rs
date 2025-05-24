@@ -1,5 +1,6 @@
 use std::io::{Read, Seek};
 
+pub use sb_linker_config as config;
 pub use sb_linker_obj as obj;
 
 use sb_linker_config::Config;
