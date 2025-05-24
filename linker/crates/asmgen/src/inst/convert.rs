@@ -132,7 +132,9 @@ pub fn write_insts<W: Write>(buf: &mut W, obj: Object) -> anyhow::Result<()> {
             }
 
             // ラベル
-            _ => unreachable!(),
+            Inst::Label { label} => {
+                writeln!(buf, "@{}.{}", obj.name, label)
+            }
         }
     };
 
