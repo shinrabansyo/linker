@@ -2,7 +2,7 @@ use std::io::Read;
 
 use sb_linker_obj::Object;
 
-pub fn load_objfile<R: Read>(f: &mut R) -> anyhow::Result<Object> {
+pub fn load_objfile<R: Read>(f: &mut R) -> anyhow::Result<Vec<Object>> {
     // Header
     let mut header = [0; 2];
     f.read(&mut header)?;
@@ -11,7 +11,7 @@ pub fn load_objfile<R: Read>(f: &mut R) -> anyhow::Result<Object> {
     }
 
     // Body
-    let obj: Object = serde_cbor::from_reader(f)?;
+    let obj = serde_cbor::from_reader(f)?;
 
     Ok(obj)
 }

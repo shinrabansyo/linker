@@ -1,164 +1,147 @@
-use sb_asm::imem::ir::unresolved::Inst as AsmInst;
-use sb_asm::imem::ir::unresolved::InstKind as AsmInstKind;
-use sb_asm::imem::ir::unresolved::Value as AsmInstValue;
+use std::fmt::Write;
 
-use sb_linker_obj::inst::Inst as ObjInst;
-use sb_linker_obj::inst::InstValue as ObjInstValue;
+use sb_linker_obj::inst::{Inst, InstValue};
 use sb_linker_obj::Object;
 
-pub fn convert_inst(obj: Object) -> Vec<AsmInst> {
-    let gen_label = |label: u32| {
-        format!("{}.{}", &obj.name, label)
-    };
+pub fn write_insts<W: Write>(buf: &mut W, obj: Object) -> anyhow::Result<()> {
+    // 変換に使用するクロージャ
+    macro_rules! write_value {
+        ($buf:expr, $value:expr) => {
+            match $value {
+                InstValue::InstLabel(label) => writeln!($buf, "@{}.{}", obj.name, label),
+                InstValue::Function(fname) => writeln!($buf, "@{}", fname),
+                InstValue::Imm(imm) => writeln!($buf, "{}", imm),
+                _ => unimplemented!(),
+            }
+        };
+    }
 
-    let convert_value = |value: ObjInstValue| {
-        match value {
-            ObjInstValue::InstLabel(label) => AsmInstValue::InstLabel(gen_label(label)),
-            ObjInstValue::Imm(imm) => AsmInstValue::Imm(imm as i64),
-            _ => unimplemented!(),
-        }
-    };
-
-    let convert_inst = |inst: ObjInst| {
+    let mut write_inst = |inst: &Inst| {
         match inst {
             // R-形式
-            ObjInst::Add { rd, rs1, rs2 } => AsmInstKind::Add { rd, rs1, rs2 },
-            ObjInst::Sub { rd, rs1, rs2 } => AsmInstKind::Sub { rd, rs1, rs2 },
-            ObjInst::And { rd, rs1, rs2 } => AsmInstKind::And { rd, rs1, rs2 },
-            ObjInst::Or  { rd, rs1, rs2 } => AsmInstKind::Or  { rd, rs1, rs2 },
-            ObjInst::Xor { rd, rs1, rs2 } => AsmInstKind::Xor { rd, rs1, rs2 },
-            ObjInst::Srl { rd, rs1, rs2 } => AsmInstKind::Srl { rd, rs1, rs2 },
-            ObjInst::Sra { rd, rs1, rs2 } => AsmInstKind::Sra { rd, rs1, rs2 },
-            ObjInst::Sll { rd, rs1, rs2 } => AsmInstKind::Sll { rd, rs1, rs2 },
+            Inst::Add { rd, rs1, rs2 } => {
+                writeln!(buf, "  add  r{} = r{}, r{}", rd, rs1, rs2)
+            }
+            Inst::Sub { rd, rs1, rs2 } => {
+                writeln!(buf, "  sub  r{} = r{}, r{}", rd, rs1, rs2)
+            }
+            Inst::And { rd, rs1, rs2 } => {
+                writeln!(buf, "  and  r{} = r{}, r{}", rd, rs1, rs2)
+            }
+            Inst::Or  { rd, rs1, rs2 } => {
+                writeln!(buf, "  or   r{} = r{}, r{}", rd, rs1, rs2)
+            }
+            Inst::Xor { rd, rs1, rs2 } => {
+                writeln!(buf, "  xor  r{} = r{}, r{}", rd, rs1, rs2)
+            }
+            Inst::Srl { rd, rs1, rs2 } => {
+                writeln!(buf, "  srl  r{} = r{}, r{}", rd, rs1, rs2)
+            }
+            Inst::Sra { rd, rs1, rs2 } => {
+                writeln!(buf, "  sra  r{} = r{}, r{}", rd, rs1, rs2)
+            }
+            Inst::Sll { rd, rs1, rs2 } => {
+                writeln!(buf, "  sll  r{} = r{}, r{}", rd, rs1, rs2)
+            }
 
             // I-形式
-            ObjInst::Addi { rd, rs1, value } => AsmInstKind::Addi { rd, rs1, val: convert_value(value) },
-            ObjInst::Subi { rd, rs1, value } => AsmInstKind::Subi { rd, rs1, val: convert_value(value) },
-            ObjInst::Andi { rd, rs1, value } => AsmInstKind::Andi { rd, rs1, val: convert_value(value) },
-            ObjInst::Ori  { rd, rs1, value } => AsmInstKind::Ori  { rd, rs1, val: convert_value(value) },
-            ObjInst::Xori { rd, rs1, value } => AsmInstKind::Xori { rd, rs1, val: convert_value(value) },
-            ObjInst::Srli { rd, rs1, value } => AsmInstKind::Srli { rd, rs1, val: convert_value(value) },
-            ObjInst::Srai { rd, rs1, value } => AsmInstKind::Srai { rd, rs1, val: convert_value(value) },
-            ObjInst::Slli { rd, rs1, value } => AsmInstKind::Slli { rd, rs1, val: convert_value(value) },
-            ObjInst::Lb   { rd, rs1, imm } => AsmInstKind::Lb  { rd, rs1, imm },
-            ObjInst::Lbu  { rd, rs1, imm } => AsmInstKind::Lbu { rd, rs1, imm },
-            ObjInst::Lh   { rd, rs1, imm } => AsmInstKind::Lh  { rd, rs1, imm },
-            ObjInst::Lhu  { rd, rs1, imm } => AsmInstKind::Lhu { rd, rs1, imm },
-            ObjInst::Lw   { rd, rs1, imm } => AsmInstKind::Lw  { rd, rs1, imm },
-            ObjInst::Jal  { rd, rs1, imm } => AsmInstKind::Jal { rd, rs1, imm },
-            ObjInst::In   { rd, rs1, imm } => AsmInstKind::In  { rd, rs1, imm },
+            Inst::Addi { rd, rs1, value } => {
+                write!(buf, "  addi r{} = r{}, ", rd, rs1)?;
+                write_value!(buf, value)
+            }
+            Inst::Subi { rd, rs1, value } => {
+                write!(buf, "  subi r{} = r{}, ", rd, rs1)?;
+                write_value!(buf, value)
+            }
+            Inst::Andi { rd, rs1, value } => {
+                write!(buf, "  andi r{} = r{}, ", rd, rs1)?;
+                write_value!(buf, value)
+            }
+            Inst::Ori  { rd, rs1, value } => {
+                write!(buf, "  ori  r{} = r{}, ", rd, rs1)?;
+                write_value!(buf, value)
+            }
+            Inst::Xori { rd, rs1, value } => {
+                write!(buf, "  xori r{} = r{}, ", rd, rs1)?;
+                write_value!(buf, value)
+            }
+            Inst::Srli { rd, rs1, value } => {
+                write!(buf, "  srli r{} = r{}, ", rd, rs1)?;
+                write_value!(buf, value)
+            }
+            Inst::Srai { rd, rs1, value } => {
+                write!(buf, "  srai r{} = r{}, ", rd, rs1)?;
+                write_value!(buf, value)
+            }
+            Inst::Slli { rd, rs1, value } => {
+                write!(buf, "  slli r{} = r{}, ", rd, rs1)?;
+                write_value!(buf, value)
+            }
+            Inst::Lb   { rd, rs1, imm } => {
+                writeln!(buf, "  lb   r{} = r{}[{}]", rd, rs1, imm)
+            }
+            Inst::Lbu  { rd, rs1, imm } => {
+                writeln!(buf, "  lbu  r{} = r{}[{}]", rd, rs1, imm)
+            }
+            Inst::Lh   { rd, rs1, imm } => {
+                writeln!(buf, "  lh   r{} = r{}[{}]", rd, rs1, imm)
+            }
+            Inst::Lhu  { rd, rs1, imm } => {
+                writeln!(buf, "  lhu  r{} = r{}[{}]", rd, rs1, imm)
+            }
+            Inst::Lw   { rd, rs1, imm } => {
+                writeln!(buf, "  lw   r{} = r{}[{}]", rd, rs1, imm)
+            }
+            Inst::Jal  { rd, rs1, imm } => {
+                writeln!(buf, "  jal  r{}, r{}[{}]", rd, rs1, imm)
+            }
+            Inst::In   { rd, rs1, imm } => {
+                writeln!(buf, "  in   r{} = r{}[{}]", rd, rs1, imm)
+            }
 
             // B-形式
-            ObjInst::Beq { rd, rs1, rs2, value } => AsmInstKind::Beq { rd, rs1, rs2, val: convert_value(value) },
-            ObjInst::Bne { rd, rs1, rs2, value } => AsmInstKind::Bne { rd, rs1, rs2, val: convert_value(value) },
-            ObjInst::Blt { rd, rs1, rs2, value } => AsmInstKind::Blt { rd, rs1, rs2, val: convert_value(value) },
-            ObjInst::Ble { rd, rs1, rs2, value } => AsmInstKind::Ble { rd, rs1, rs2, val: convert_value(value) },
+            Inst::Beq { rd, rs1, rs2, value } => {
+                write!(buf, "  beq  r{}, (r{}, r{}) -> ", rd, rs1, rs2)?;
+                write_value!(buf, value)
+            }
+            Inst::Bne { rd, rs1, rs2, value } => {
+                write!(buf, "  bne  r{}, (r{}, r{}) -> ", rd, rs1, rs2)?;
+                write_value!(buf, value)
+            }
+            Inst::Blt { rd, rs1, rs2, value } => {
+                write!(buf, "  blt  r{}, (r{}, r{}) -> ", rd, rs1, rs2)?;
+                write_value!(buf, value)
+            }
+            Inst::Ble { rd, rs1, rs2, value } => {
+                write!(buf, "  ble  r{}, (r{}, r{}) -> ", rd, rs1, rs2)?;
+                write_value!(buf, value)
+            }
 
             // S-形式
-            ObjInst::Sb  { rs1, rs2, imm } => AsmInstKind::Sb  { rs1, rs2, imm },
-            ObjInst::Sh  { rs1, rs2, imm } => AsmInstKind::Sh  { rs1, rs2, imm },
-            ObjInst::Sw  { rs1, rs2, imm } => AsmInstKind::Sw  { rs1, rs2, imm },
-            ObjInst::Out { rs1, rs2, imm } => AsmInstKind::Out { rs1, rs2, imm },
+            Inst::Sb { rs1, rs2, imm } => {
+                writeln!(buf, "  sb   r{}[{}] = r{}", rs1, imm, rs2)
+            }
+            Inst::Sh { rs1, rs2, imm } => {
+                writeln!(buf, "  sh   r{}[{}] = r{}", rs1, imm, rs2)
+            }
+            Inst::Sw { rs1, rs2, imm } => {
+                writeln!(buf, "  sw   r{}[{}] = r{}", rs1, imm, rs2)
+            }
+            Inst::Out { rs1, rs2, imm } => {
+                writeln!(buf, "  out  r{}[{}] = r{}", rs1, imm, rs2)
+            }
 
             // ラベル
-            _ => unreachable!(),
+            Inst::Label { label} => {
+                writeln!(buf, "@{}.{}", obj.name, label)
+            }
         }
     };
 
-    // 変換部本体
-    let mut obj_inst_iter = obj.code.into_iter();
-    let mut asm_insts = vec![];
-    while let Some(inst) = obj_inst_iter.next() {
-        // 1. ラベル確認
-        let mut label = None;
-        let inst = match inst {
-            ObjInst::Label { label: label_num } => {
-                label = Some(gen_label(label_num));
-                obj_inst_iter.next().unwrap()
-            }
-            _ => inst,
-        };
-
-        // 2. 命令変換 (ObjInst -> AsmInst)
-        let asm = AsmInst {
-            label,
-            kind: convert_inst(inst),
-        };
-        asm_insts.push(asm);
+    // 変換処理本体
+    for inst in obj.code.iter() {
+        write_inst(inst)?;
     }
 
-    asm_insts
-}
-
-#[cfg(test)]
-mod tests {
-    use sb_asm::imem::ir::unresolved::InstKind as AsmInstKind;
-    use sb_asm::imem::ir::unresolved::Value as AsmInstValue;
-
-    use sb_linker_obj::inst::Inst;
-    use sb_linker_obj::inst::InstValue;
-    use sb_linker_obj::{inst, Object};
-
-    use super::convert_inst;
-
-    #[test]
-    fn test_convert_renaming() {
-        let obj = Object {
-            name: "test1".to_string(),
-            code: vec![
-                inst!(Addi 0, 0, InstValue::Imm(0)),
-                inst!(Beq  0, 0, 0, InstValue::InstLabel(0)),
-            ],
-        };
-
-        let asm_inst = convert_inst(obj);
-
-        assert_eq!(asm_inst.len(), 2);
-        assert_inst_label_eq(&asm_inst[1].kind, "test1.0");
-    }
-
-    #[test]
-    fn test_convert_labeling() {
-        let obj = Object {
-            name: "test".to_string(),
-            code: vec![
-                inst!(Label 0),
-                inst!(Addi 0, 0, InstValue::Imm(0)),
-            ],
-        };
-
-        let asm_inst = convert_inst(obj);
-
-        assert_eq!(asm_inst.len(), 1);
-        assert_eq!(asm_inst[0].label, Some("test.0".to_string()));
-    }
-
-    fn assert_inst_label_eq(inst: &AsmInstKind, label: &str) {
-        let assert_inst_label_eq = |value: &AsmInstValue| {
-            match value {
-                AsmInstValue::InstLabel(l) => assert_eq!(l, label),
-                _ => panic!("Expected InstLabel, but got {:?}", value),
-            }
-        };
-
-        match inst {
-            // I-形式
-            AsmInstKind::Addi { val, .. } => assert_inst_label_eq(val),
-            AsmInstKind::Subi { val, .. } => assert_inst_label_eq(val),
-            AsmInstKind::Andi { val, .. } => assert_inst_label_eq(val),
-            AsmInstKind::Ori  { val, .. } => assert_inst_label_eq(val),
-            AsmInstKind::Xori { val, .. } => assert_inst_label_eq(val),
-            AsmInstKind::Srli { val, .. } => assert_inst_label_eq(val),
-            AsmInstKind::Srai { val, .. } => assert_inst_label_eq(val),
-            AsmInstKind::Slli { val, .. } => assert_inst_label_eq(val),
-
-            // B-形式
-            AsmInstKind::Beq { val, .. } => assert_inst_label_eq(val),
-            AsmInstKind::Bne { val, .. } => assert_inst_label_eq(val),
-            AsmInstKind::Blt { val, .. } => assert_inst_label_eq(val),
-            AsmInstKind::Ble { val, .. } => assert_inst_label_eq(val),
-
-            _ => {}
-        }
-    }
+    Ok(())
 }

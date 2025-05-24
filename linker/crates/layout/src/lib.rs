@@ -4,7 +4,7 @@ mod inst;
 use sb_linker_obj::Object;
 
 pub fn layout(objs: Vec<Object>) -> Vec<Object> {
-    // 1. データのレイアウト
+    // 1. データのレイアウト (TODO)
     let _ = data::layout(&objs);
 
     // 2. 命令領域にレイアウト結果を反映
