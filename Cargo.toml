@@ -3,6 +3,11 @@ name = "sb_linker_cli"
 version = "0.1.0"
 edition = "2024"
 
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+sb_linker = { path = "./linker" }
+
 [workspace]
 resolver = "2"
 members = [
