@@ -108,6 +108,11 @@ dependencies = [
 [[package]]
 name = "sb_linker_cli"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "sb_linker",
+ "thiserror",
+]
 
 [[package]]
 name = "sb_linker_config"
