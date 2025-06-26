@@ -8,7 +8,7 @@ pub fn gen_entrypoint(config: &Config) -> Object {
         inst!(Addi 2, 0, InstValue::Imm(config.general.stack_addr as i32)),
 
         // main 関数呼び出し
-        inst!(Beq 1, 0, 0, InstValue::Function("global.main".to_string())),
+        inst!(Beq 1, 0, 0, InstValue::Function(config.general.main.clone())),
 
         // 無限ループ
         inst!(Beq 0, 0, 0, InstValue::Imm(0)),
