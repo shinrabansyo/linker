@@ -21,11 +21,11 @@ impl Default for General {
 }
 
 impl General {
-    pub fn set_main(self, main: String) -> Self {
-        General { main, ..self }
+    pub fn set_main(&mut self, main: String) {
+        self.main = main;
     }
 
-    pub fn set_stack_addr(self, stack_addr: u32) -> Self {
-        General { stack_addr, ..self  }
+    pub fn set_stack_addr(&mut self, stack_addr: u32) {
+        self.stack_addr = stack_addr;
     }
 }
