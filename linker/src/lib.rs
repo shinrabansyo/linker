@@ -2,9 +2,9 @@ use std::io::{Read, Seek};
 
 pub use sb_linker_config as config;
 pub use sb_linker_obj as obj;
+pub use sb_linker_load::load;
 
 use sb_linker_config::Config;
-use sb_linker_load::load;
 use sb_linker_layout::layout;
 use sb_linker_asmgen::asmgen;
 
