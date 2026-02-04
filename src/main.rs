@@ -25,8 +25,12 @@ struct CliOptions {
     #[bpaf(short, long, fallback("a.asm".into()))]
     output: PathBuf,
     /// Input file
-    #[bpaf(positional("INPUT"))]
+    #[bpaf(positional("INPUT"), guard(is_not_empty, "At least one input file is required"))]
     input: Vec<PathBuf>,
+}
+
+fn is_not_empty<T>(a: &Vec<T>) -> bool {
+    !a.is_empty()
 }
 
 fn main() -> anyhow::Result<()> {
