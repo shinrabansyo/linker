@@ -15,6 +15,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1b8e56985ec62d17e9c1001dc89c88ecd7dc08e47eba5ec7c29c7b5eeecde967"
 
 [[package]]
+name = "bpaf"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8bac242287491ba761f8943d48c2b3eca2b30485187a7a13fa6b2168c058f342"
+dependencies = [
+ "bpaf_derive",
+]
+
+[[package]]
+name = "bpaf_derive"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "af3c1dc174c8c49192fe1553cb25f75ba410a4b26b2bf5ca620307579e9ca078"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -138,6 +158,7 @@ name = "sb_linker_cli"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "bpaf",
  "sb_linker",
  "thiserror",
  "toml",

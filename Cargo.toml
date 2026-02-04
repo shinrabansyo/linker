@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 anyhow = { workspace = true }
 thiserror = { workspace = true }
+bpaf = { version = "0.8.1", features = ["derive"] }
 toml = "0.8.23"
 sb_linker = { path = "./linker" }
 
