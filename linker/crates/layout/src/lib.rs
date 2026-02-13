@@ -1,14 +1,17 @@
-mod data;
-mod inst;
+mod elim_unused_objs;
+mod mixin_data_section;
 
 use sb_linker_obj::Object;
 
-pub fn layout(objs: Vec<Object>) -> Vec<Object> {
-    // 1. データのレイアウト (TODO)
-    let _ = data::layout(&objs);
+use elim_unused_objs::elim_unused_objs;
+use mixin_data_section::mixin_data_section;
 
-    // 2. 命令領域にレイアウト結果を反映
-    let objs = inst::apply_layout(objs);
+pub fn layout(objs: Vec<Object>) -> Vec<Object> {
+    // 未使用オブジェクトを削除
+    let objs = elim_unused_objs(objs);
+
+    // 複数のオブジェクトファイルに存在するデータセクションを 1 つにまとめる (TODO)
+    let (_, objs) = mixin_data_section(objs);
 
     objs
 }
